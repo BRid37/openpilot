@@ -377,7 +377,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 
   // Backup FrogPilot
   std::vector<QString> frogpilotBackupOptions{tr("BACKUP"), tr("DELETE"), tr("RESTORE")};
-  FrogPilotButtonsControl *frogpilotBackupBtn = new FrogPilotButtonsControl(tr("FrogPilot Backups"), tr("Backup, delete, or restore your FrogPilot backups."), "", frogpilotBackupOptions);
+  FrogPilotButtonsControl *frogpilotBackupBtn = new FrogPilotButtonsControl(tr("Hpilot Backups"), tr("Backup, delete, or restore your Hpilot backups."), "", frogpilotBackupOptions);
   connect(frogpilotBackupBtn, &FrogPilotButtonsControl::buttonClicked, [=](int id) {
     QDir backupDir("/data/backups");
 
@@ -425,7 +425,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 
       QString selection = MultiOptionDialog::getSelection(tr("Select a restore point"), backupNames, "", this);
       if (!selection.isEmpty()) {
-        if (!ConfirmationDialog::confirm(tr("Are you sure you want to restore this version of FrogPilot?"), tr("Restore"), this)) return;
+        if (!ConfirmationDialog::confirm(tr("Are you sure you want to restore this version of Hpilot?"), tr("Restore"), this)) return;
         std::thread([=]() {
           frogpilotBackupBtn->setEnabled(false);
           frogpilotBackupBtn->setValue(tr("Restoring..."));
