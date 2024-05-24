@@ -213,7 +213,7 @@ def manager_init() -> None:
     ("MTSCEnabled", "1"),
     ("NewLongAPI", "0"),
     ("NNFF", "1"),
-    ("NNFFLite", "1"),
+    ("LateralJerk", "1"),
     ("NoLogging", "0"),
     ("NorthDakotaCalibrationParams", ""),
     ("NorthDakotaDrives", "0"),
