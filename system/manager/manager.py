@@ -345,7 +345,15 @@ def manager_init() -> None:
     ("WD40LiveTorqueParameters", ""),
     ("WD40Score", "0"),
     ("WheelIcon", "3"),
-    ("WheelSpeed", "0")
+    ("WheelSpeed", "0"),
+
+    # Default Hpilot parameters
+    ("CustomTorque", "1"),
+    ("DeltaDown", "8"),
+    ("DeltaUp", "4"),
+    ("DriverAllowance", "250"),
+    ("SteerMax", "409"),
+    ("SteerThreshold", "250"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
