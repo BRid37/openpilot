@@ -449,6 +449,8 @@ void ui_update_frogpilot_params(UIState *s, Params &params) {
   if (scene.tethering_config == 2) {
     WifiManager(s).setTetheringEnabled(true);
   }
+
+  scene.mute_dm = params.getBool("MuteDM");
 }
 
 void UIState::updateStatus() {
