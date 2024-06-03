@@ -292,10 +292,14 @@ static void update_state(UIState *s) {
     }
   }
   if (sm.updated("liveTorqueParameters")) {
-    auto liveTorqueParameters = sm["liveTorqueParameters"].getLiveTorqueParameters();
-    scene.friction = liveTorqueParameters.getFrictionCoefficientFiltered();
-    scene.lat_accel = liveTorqueParameters.getLatAccelFactorFiltered();
-    scene.live_valid = liveTorqueParameters.getLiveValid();
+    auto torque_params = sm["liveTorqueParameters"].getLiveTorqueParameters();
+    if (!scene.live_tune) {
+      scene.friction = torque_params.getFrictionCoefficientFiltered();
+      scene.lat_accel = torque_params.getLatAccelFactorFiltered();
+    } else {
+      scene.friction = scene.live_friction;
+      scene.lat_accel = scene.live_lat_accel;
+    }
   }
   if (sm.updated("wideRoadCameraState")) {
     auto cam_state = sm["wideRoadCameraState"].getWideRoadCameraState();
@@ -451,6 +455,9 @@ void ui_update_frogpilot_params(UIState *s, Params &params) {
   }
 
   scene.mute_dm = params.getBool("MuteDM");
+  scene.live_tune = params.getBool("LiveTune");
+  scene.live_friction = params.getFloat("LiveFriction");
+  scene.live_lat_accel = params.getFloat("LiveLatAccel");
 }
 
 void UIState::updateStatus() {
