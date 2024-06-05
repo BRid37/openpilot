@@ -160,7 +160,6 @@ typedef struct UIScene {
   bool is_storage_used;
   bool lead_info;
   bool live_tune;
-  bool live_valid;
   bool map_open;
   bool model_randomizer;
   bool model_ui;
