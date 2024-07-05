@@ -670,7 +670,7 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
   }
   prob_alpha *= 245;
 
-  painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), 2));
+  painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), 2));
   painter.setBrush(QColor(0, 0, 0, 0));
   float ww = 300 , hh = 300;
   if(Hardware::TICI()){
@@ -728,7 +728,7 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
 
   painter.setFont(InterFont(38, QFont::DemiBold));
   if(num == 0){
-    painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), 2));
+    painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), 2));
     painter.drawRect(r);
 
     if(leadcar_lockon[0].x > leadcar_lockon[1].x - 20){
@@ -811,7 +811,7 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
 
       float tlw = 8;
       float tlw_2 = tlw / 2;
-      painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), tlw));
+      painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), tlw));
       painter.drawLine(r.center().x() , r.top()-tlw_2 , r.center().x() , r.top() - td);
       painter.drawLine(r.left()-tlw_2 , r.center().y() , r.left() - td , r.center().y());
       painter.drawLine(r.right()+tlw_2 , r.center().y() , r.right() + td , r.center().y());
@@ -823,7 +823,7 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
       if(std::abs(y0 - y1) > 300) {
         painter.setPen(QPen(QColor(245, 0, 0, prob_alpha), 2));
       } else {
-        painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), 2));
+        painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), 2));
       }
 
       if(leadcar_lockon[0].x > leadcar_lockon[1].x - 20){
@@ -842,9 +842,9 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
       painter.drawLine(lxt,r.top() , leadcar_lockon[num].lxf , 0);
 
     } else if(num == 2){
-      painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), 2));
+      painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), 2));
     } else {
-      painter.setPen(QPen(QColor(0.09*255, 0.945*255, 0.26*255, prob_alpha), 2));
+      painter.setPen(QPen(QColor(255, 153, 0, prob_alpha), 2));
     }
 
     painter.drawRect(r);
