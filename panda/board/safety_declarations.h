@@ -224,9 +224,12 @@ bool sport_mode = false;
 struct sample_t vehicle_speed;
 bool vehicle_moving = false;
 bool acc_main_on = false;  // referred to as "ACC off" in ISO 15622:2018
+bool lkas_enabled = false;
 int cruise_button_prev = 0;
 int cruise_main_prev = 0;
 bool safety_rx_checks_invalid = false;
+bool aol_allowed = false;
+bool lkas_pressed_prev = false;
 
 // for safety modes with torque steering control
 int desired_torque_last = 0;       // last desired steer torque

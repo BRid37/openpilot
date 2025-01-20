@@ -19,7 +19,7 @@ void FrogPilotPrimelessPanel::createMapboxKeyControl(ButtonControl *&control, co
         control->setText(tr("ADD"));
 
         params.put(paramKey, "0");
-        paramsStorage.put(paramKey, "0");
+        params_storage.put(paramKey, "0");
 
         setupCompleted = false;
       }
@@ -73,7 +73,7 @@ FrogPilotPrimelessPanel::FrogPilotPrimelessPanel(FrogPilotSettingsWindow *parent
         amapKeyControl1->setText(tr("ADD"));
 
         params.put("AMapKey1", "0");
-        paramsStorage.put("AMapKey1", "0");
+        params_storage.put("AMapKey1", "0");
       }
     }
   });
@@ -95,7 +95,7 @@ FrogPilotPrimelessPanel::FrogPilotPrimelessPanel(FrogPilotSettingsWindow *parent
         amapKeyControl2->setText(tr("ADD"));
 
         params.put("AMapKey2", "0");
-        paramsStorage.put("AMapKey2", "0");
+        params_storage.put("AMapKey2", "0");
       }
     }
   });
@@ -117,7 +117,7 @@ FrogPilotPrimelessPanel::FrogPilotPrimelessPanel(FrogPilotSettingsWindow *parent
         googleKeyControl->setText(tr("ADD"));
 
         params.put("GMapKey", "0");
-        paramsStorage.put("GMapKey", "0");
+        params_storage.put("GMapKey", "0");
       }
     }
   });

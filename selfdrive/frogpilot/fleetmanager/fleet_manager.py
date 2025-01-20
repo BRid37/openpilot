@@ -29,6 +29,7 @@ import traceback
 import openpilot.selfdrive.frogpilot.fleetmanager.helpers as fleet
 
 from flask import Flask, Response, jsonify, redirect, render_template, request, send_from_directory, session, url_for
+from pathlib import Path
 from requests.exceptions import ConnectionError
 
 from openpilot.common.realtime import set_core_affinity
@@ -163,7 +164,7 @@ def error_logs():
 
 @app.route("/error_logs/<file_name>")
 def open_error_log(file_name):
-  f = open(fleet.ERROR_LOGS_PATH + file_name)
+  f = open(Path(fleet.ERROR_LOGS_PATH) / file_name)
   error = f.read()
   return render_template("error_log.html", file_name=file_name, file_content=error)
 

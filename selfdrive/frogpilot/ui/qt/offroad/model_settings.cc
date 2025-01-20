@@ -343,7 +343,7 @@ void FrogPilotModelPanel::updateModelLabels() {
     int score = modelData.value("Score").toInt(0);
 
     QString drivesDisplay = drives == 1 ? QString("%1 Drive").arg(drives) : drives > 0 ? QString("%1 Drives").arg(drives) : "N/A";
-    QString scoreDisplay = score > 0 ? QString("Score: %1%").arg(score) : "N/A";
+    QString scoreDisplay = drives > 0 ? QString("Score: %1%").arg(score) : "N/A";
 
     QString labelTitle = QStringLiteral("%1").arg(processModelName(modelName));
     QString labelText = QStringLiteral("%1 (%2)").arg(scoreDisplay, drivesDisplay);

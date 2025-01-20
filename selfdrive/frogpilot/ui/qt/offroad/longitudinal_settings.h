@@ -56,5 +56,5 @@ private:
   QJsonObject frogpilotToggleLevels;
 
   Params params;
-  Params params_default{"/data/params_default"};
+  Params params_default{"/dev/shm/params_default"};
 };

@@ -92,8 +92,7 @@ class LongControl:
     self.long_control_state = LongCtrlState.off
     self.pid = PIDController((CP.longitudinalTuning.kpBP, CP.longitudinalTuning.kpV),
                              (CP.longitudinalTuning.kiBP, CP.longitudinalTuning.kiV),
-                             k_f=CP.longitudinalTuning.kf, rate=1 / DT_CTRL,
-                             longitudinal_pid=True)
+                             k_f=CP.longitudinalTuning.kf, rate=1 / DT_CTRL)
     self.v_pid = 0.0
     self.last_output_accel = 0.0
 
@@ -126,7 +125,7 @@ class LongControl:
     else:  # LongCtrlState.pid
       error = a_target - CS.aEgo
       output_accel = self.pid.update(error, speed=CS.vEgo,
-                                     feedforward=a_target, frogpilot_toggles=frogpilot_toggles)
+                                     feedforward=a_target)
 
     self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
     return self.last_output_accel
@@ -190,8 +189,7 @@ class LongControl:
       error_deadzone = apply_deadzone(error, deadzone)
       output_accel = self.pid.update(error_deadzone, speed=CS.vEgo,
                                      feedforward=a_target,
-                                     freeze_integrator=freeze_integrator,
-                                     frogpilot_toggles=frogpilot_toggles)
+                                     freeze_integrator=freeze_integrator)
 
     self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
 

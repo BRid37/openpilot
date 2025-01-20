@@ -47,7 +47,7 @@ private:
   FrogPilotSettingsWindow *parent;
 
   Params params;
-  Params params_default{"/data/params_default"};
+  Params params_default{"/dev/shm/params_default"};
   Params params_memory{"/dev/shm/params"};
   Params params_storage{"/persist/params"};
 

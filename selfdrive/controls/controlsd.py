@@ -578,11 +578,9 @@ class Controls:
     # Update Torque Params
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
-      friction = torque_params.frictionCoefficientFiltered
-      lat_accel_factor = torque_params.latAccelFactorFiltered
       if self.sm.all_checks(['liveTorqueParameters']) and (torque_params.useParams or self.frogpilot_toggles.force_auto_tune):
-        self.LaC.update_live_torque_params(lat_accel_factor, torque_params.latAccelOffsetFiltered,
-                                           friction)
+        self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered,
+                                           torque_params.frictionCoefficientFiltered)
 
     long_plan = self.sm['longitudinalPlan']
     model_v2 = self.sm['modelV2']
@@ -723,12 +721,11 @@ class Controls:
     return CC, lac_log, FPCC
 
   def update_frogpilot_variables(self, CS):
-    self.always_on_lateral_active |= self.frogpilot_toggles.always_on_lateral_main or CS.cruiseState.enabled
-    self.always_on_lateral_active &= self.frogpilot_toggles.always_on_lateral_set and CS.cruiseState.available
+    self.always_on_lateral_active |= self.frogpilot_toggles.always_on_lateral_main or self.frogpilot_toggles.always_on_lateral_lkas or CS.cruiseState.enabled
+    self.always_on_lateral_active &= self.frogpilot_toggles.always_on_lateral_set and (CS.cruiseState.available or self.sm['frogpilotCarState'].alwaysOnLateralEnabled)
     self.always_on_lateral_active &= CS.gearShifter not in NON_DRIVING_GEARS
     self.always_on_lateral_active &= self.sm['frogpilotPlan'].lateralCheck
     self.always_on_lateral_active &= self.sm['liveCalibration'].calPerc >= 1
-    self.always_on_lateral_active &= not (self.frogpilot_toggles.always_on_lateral_lkas and self.sm['frogpilotCarState'].alwaysOnLateralDisabled)
     self.always_on_lateral_active &= not (CS.brakePressed and CS.vEgo < self.frogpilot_toggles.always_on_lateral_pause_speed) or CS.standstill
     self.always_on_lateral_active = bool(self.always_on_lateral_active)
 

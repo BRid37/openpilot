@@ -180,6 +180,14 @@ static void hyundai_rx_hook(const CANPacket_t *to_push) {
       update_sample(&torque_driver, torque_driver_new);
     }
 
+    bool lkas_button = false;
+    if (addr == 0x391) {
+      lkas_button = GET_BIT(to_push, 4U);
+      if (alternative_experience & ALT_EXP_ALWAYS_ON_LATERAL) {
+        hyundai_lkas_button_check(lkas_button);
+      }
+    }
+
     // ACC steering wheel buttons
     if (addr == 0x4F1) {
       int cruise_button = GET_BYTE(to_push, 0) & 0x7U;

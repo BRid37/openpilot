@@ -17,7 +17,7 @@ from openpilot.system.version import get_build_metadata
 from panda import ALTERNATIVE_EXPERIENCE
 
 params = Params()
-params_default = Params("/data/params_default")
+params_default = Params("/dev/shm/params_default")
 params_memory = Params("/dev/shm/params")
 
 GearShifter = car.CarState.GearShifter
@@ -108,7 +108,6 @@ frogpilot_default_params: list[tuple[str, str | bytes, int]] = [
   ("ClusterOffset", "1.015", 2),
   ("Compass", "0", 1),
   ("ConditionalExperimental", "1", 0),
-  ("CrosstrekTorque", "1", 3),
   ("CurveSensitivity", "100", 2),
   ("CurveSpeedControl", "0", 1),
   ("CustomAlerts", "1", 0),
@@ -175,7 +174,7 @@ frogpilot_default_params: list[tuple[str, str | bytes, int]] = [
   ("LeadDetectionThreshold", "35", 3),
   ("LeadInfo", "1", 3),
   ("LockDoors", "1", 0),
-  ("LockDoorsTimer", "0", 3),
+  ("LockDoorsTimer", "0", 0),
   ("LongitudinalMetrics", "1", 3),
   ("LongitudinalTune", "1", 0),
   ("LongPitch", "1", 2),
@@ -374,6 +373,7 @@ class FrogPilotVariables:
         car_model = CP.carFingerprint
         has_auto_tune = car_make in {"hyundai", "toyota"} and CP.lateralTuning.which() == "torque"
         has_bsm = CP.enableBsm
+        has_pedal = CP.enableGasInterceptor
         has_radar = not CP.radarUnavailable
         is_pid_car = CP.lateralTuning.which() == "pid"
         kiBP = list(CP.longitudinalTuning.kiBP)
@@ -390,6 +390,7 @@ class FrogPilotVariables:
       car_model = "mock"
       has_auto_tune = False
       has_bsm = False
+      has_pedal = False
       has_radar = False
       is_pid_car = False
       kiBP = [0.]
@@ -408,7 +409,6 @@ class FrogPilotVariables:
     else:
       toggle.liveValid = False
 
-    toggle.allow_auto_locking_doors = self.testing_branch and tuning_level >= 3 or self.frogpilot_toggles.frogs_go_moo
     toggle.allow_far_lead_tracking = self.testing_branch and tuning_level >= 3 and has_radar or self.frogpilot_toggles.frogs_go_moo
 
     advanced_custom_ui = params.get_bool("AdvancedCustomUI") if tuning_level >= level["AdvancedCustomUI"] else default.get_bool("AdvancedCustomUI")
@@ -447,8 +447,8 @@ class FrogPilotVariables:
 
     toggle.always_on_lateral = params.get_bool("AlwaysOnLateral") if tuning_level >= level["AlwaysOnLateral"] else default.get_bool("AlwaysOnLateral")
     toggle.always_on_lateral_set = toggle.always_on_lateral and always_on_lateral_set
-    toggle.always_on_lateral_lkas = toggle.always_on_lateral_set and car_make != "subaru" and (params.get_bool("AlwaysOnLateralLKAS") if tuning_level >= level["AlwaysOnLateralLKAS"] else default.get_bool("AlwaysOnLateralLKAS"))
-    toggle.always_on_lateral_main = toggle.always_on_lateral_set and (params.get_bool("AlwaysOnLateralMain") if tuning_level >= level["AlwaysOnLateralMain"] else default.get_bool("AlwaysOnLateralMain"))
+    toggle.always_on_lateral_lkas = toggle.always_on_lateral_set and car_make == "hyundai" and (params.get_bool("AlwaysOnLateralLKAS") if tuning_level >= level["AlwaysOnLateralLKAS"] else default.get_bool("AlwaysOnLateralLKAS"))
+    toggle.always_on_lateral_main = toggle.always_on_lateral_set and not toggle.always_on_lateral_lkas and (params.get_bool("AlwaysOnLateralMain") if tuning_level >= level["AlwaysOnLateralMain"] else default.get_bool("AlwaysOnLateralMain"))
     toggle.always_on_lateral_pause_speed = params.get_int("PauseAOLOnBrake") if toggle.always_on_lateral_set and tuning_level >= level["PauseAOLOnBrake"] else default.get_int("PauseAOLOnBrake")
 
     toggle.automatic_updates = params.get_bool("AutomaticUpdates") if tuning_level >= level["AutomaticUpdates"] else default.get_bool("AutomaticUpdates")
@@ -472,8 +472,6 @@ class FrogPilotVariables:
     toggle.conditional_signal_lane_detection = toggle.conditional_signal != 0 and (params.get_bool("CESignalLaneDetection") if tuning_level >= level["CESignalLaneDetection"] else default.get_bool("CESignalLaneDetection"))
     if toggle.conditional_experimental_mode:
       params.put_bool("ExperimentalMode", True)
-
-    toggle.crosstrek_torque = car_model == "SUBARU_IMPREZA" and params.get_bool("CrosstrekTorque") if tuning_level >= level["CrosstrekTorque"] else default.get_bool("CrosstrekTorque")
 
     toggle.curve_speed_controller = openpilot_longitudinal and (params.get_bool("CurveSpeedControl") if tuning_level >= level["CurveSpeedControl"] else default.get_bool("CurveSpeedControl"))
     toggle.curve_sensitivity = params.get_int("CurveSensitivity") / 100 if toggle.curve_speed_controller and tuning_level >= level["CurveSensitivity"] else default.get_int("CurveSensitivity") / 100
@@ -560,12 +558,15 @@ class FrogPilotVariables:
     toggle.device_shutdown_time = (device_shutdown_setting - 3) * 3600 if device_shutdown_setting >= 4 else device_shutdown_setting * (60 * 15)
     toggle.increase_thermal_limits = device_management and (params.get_bool("IncreaseThermalLimits") if tuning_level >= level["IncreaseThermalLimits"] else default.get_bool("IncreaseThermalLimits"))
     toggle.low_voltage_shutdown = clip(params.get_float("LowVoltageShutdown"), VBATT_PAUSE_CHARGING, 12.5) if device_management and tuning_level >= level["LowVoltageShutdown"] else default.get_float("LowVoltageShutdown")
-    toggle.no_logging = device_management and (params.get_bool("NoLogging") if tuning_level >= level["NoLogging"] else default.get_bool("NoLogging")) or self.development_branch
-    toggle.no_uploads = device_management and (params.get_bool("NoUploads") if tuning_level >= level["NoUploads"] else default.get_bool("NoUploads")) or self.development_branch
+    toggle.no_logging = True #device_management and (params.get_bool("NoLogging") if tuning_level >= level["NoLogging"] else default.get_bool("NoLogging")) or self.development_branch
+    toggle.no_uploads = True #device_management and (params.get_bool("NoUploads") if tuning_level >= level["NoUploads"] else default.get_bool("NoUploads")) or self.development_branch
     toggle.no_onroad_uploads = toggle.no_uploads and (params.get_bool("DisableOnroadUploads") if tuning_level >= level["DisableOnroadUploads"] else default.get_bool("DisableOnroadUploads"))
     toggle.offline_mode = device_management and (params.get_bool("OfflineMode") if tuning_level >= level["OfflineMode"] else default.get_bool("OfflineMode"))
 
     toggle.experimental_gm_tune = openpilot_longitudinal and car_make == "gm" and (params.get_bool("ExperimentalGMTune") if tuning_level >= level["ExperimentalGMTune"] else default.get_bool("ExperimentalGMTune"))
+    stoppingDecelRate = 0.3 if toggle.experimental_gm_tune else stoppingDecelRate
+    vEgoStopping = 0.15 if toggle.experimental_gm_tune else vEgoStopping
+    vEgoStarting = 0.15 if toggle.experimental_gm_tune else vEgoStarting
 
     toggle.experimental_mode_via_press = openpilot_longitudinal and (params.get_bool("ExperimentalModeActivation") if tuning_level >= level["ExperimentalModeActivation"] else default.get_bool("ExperimentalModeActivation"))
     toggle.experimental_mode_via_distance = toggle.experimental_mode_via_press and (params.get_bool("ExperimentalModeViaDistance") if tuning_level >= level["ExperimentalModeViaDistance"] else default.get_bool("ExperimentalModeViaDistance"))
@@ -573,8 +574,8 @@ class FrogPilotVariables:
     toggle.experimental_mode_via_tap = toggle.experimental_mode_via_press and (params.get_bool("ExperimentalModeViaTap") if tuning_level >= level["ExperimentalModeViaTap"] else default.get_bool("ExperimentalModeViaTap"))
 
     toggle.frogsgomoo_tweak = openpilot_longitudinal and car_make == "toyota" and (params.get_bool("FrogsGoMoosTweak") if tuning_level >= level["FrogsGoMoosTweak"] else default.get_bool("FrogsGoMoosTweak"))
-    toggle.kiBP = kiBP
-    toggle.kiV = kiV
+    toggle.kiBP = [CRUISING_SPEED, CITY_SPEED_LIMIT] if toggle.frogsgomoo_tweak else kiBP
+    toggle.kiV = [0.5, 0.25] if toggle.frogsgomoo_tweak else kiV
     toggle.stoppingDecelRate = 0.01 if toggle.frogsgomoo_tweak else stoppingDecelRate
     toggle.vEgoStopping = 0.5 if toggle.frogsgomoo_tweak else vEgoStopping
     toggle.vEgoStarting = 0.1 if toggle.frogsgomoo_tweak else vEgoStarting
@@ -595,7 +596,7 @@ class FrogPilotVariables:
     toggle.nnff_lite = lateral_tuning and (params.get_bool("NNFFLite") if tuning_level >= level["NNFFLite"] else default.get_bool("NNFFLite"))
     toggle.use_turn_desires = lateral_tuning and (params.get_bool("TurnDesires") if tuning_level >= level["TurnDesires"] else default.get_bool("TurnDesires"))
 
-    toggle.lock_doors_timer = (params.get_int("LockDoorsTimer") if tuning_level >= level["LockDoorsTimer"] else default.get_int("LockDoorsTimer")) if car_make == "toyota" and toggle.allow_auto_locking_doors else 0
+    toggle.lock_doors_timer = params.get_int("LockDoorsTimer") if car_make == "toyota" and tuning_level >= level["LockDoorsTimer"] else default.get_int("LockDoorsTimer")
 
     toggle.long_pitch = openpilot_longitudinal and car_make == "gm" and (params.get_bool("LongPitch") if tuning_level >= level["LongPitch"] else default.get_bool("LongPitch"))
 
@@ -635,7 +636,7 @@ class FrogPilotVariables:
       toggle.model = default.get("Model", encoding='utf-8')
       toggle.model_name = default.get("ModelName", encoding='utf-8')
       toggle.model_version = default.get("ModelVersion", encoding='utf-8')
-    toggle.classic_model = toggle.model_version in {"v1", "v2", "v3"}
+    toggle.classic_model = toggle.model_version in {"v1", "v2", "v3", "v4"}
     toggle.planner_curvature_model = toggle.model_version not in {"v1", "v2", "v3", "v4", "v5"}
     toggle.radarless_model = toggle.model_version in {"v3"}
 
@@ -702,7 +703,7 @@ class FrogPilotVariables:
     toggle.screen_timeout = params.get_int("ScreenTimeout") if screen_management and tuning_level >= level["ScreenTimeout"] else default.get_int("ScreenTimeout")
     toggle.screen_timeout_onroad = params.get_int("ScreenTimeoutOnroad") if screen_management and tuning_level >= level["ScreenTimeoutOnroad"] else default.get_int("ScreenTimeoutOnroad")
 
-    toggle.sng_hack = openpilot_longitudinal and car_make == "toyota" and (params.get_bool("SNGHack") if tuning_level >= level["SNGHack"] else default.get_bool("SNGHack"))
+    toggle.sng_hack = openpilot_longitudinal and car_make == "toyota" and not has_pedal and (params.get_bool("SNGHack") if tuning_level >= level["SNGHack"] else default.get_bool("SNGHack"))
 
     toggle.speed_limit_controller = openpilot_longitudinal and (params.get_bool("SpeedLimitController") if tuning_level >= level["SpeedLimitController"] else default.get_bool("SpeedLimitController"))
     toggle.force_mph_dashboard = toggle.speed_limit_controller and (params.get_bool("ForceMPHDashboard") if tuning_level >= level["ForceMPHDashboard"] else default.get_bool("ForceMPHDashboard"))
