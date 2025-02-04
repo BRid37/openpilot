@@ -76,6 +76,10 @@ std::string ensure_params_path(const std::string &prefix, const std::string &pat
 class FileLock {
 public:
   FileLock(const std::string &fn) {
+    if (fn.rfind("/cache", 0) == 0) {
+      return;
+    }
+
     fd_ = HANDLE_EINTR(open(fn.c_str(), O_CREAT, 0775));
     if (fd_ < 0 || HANDLE_EINTR(flock(fd_, LOCK_EX)) < 0) {
       LOGE("Failed to lock file %s, errno=%d", fn.c_str(), errno);
@@ -313,7 +317,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"ExperimentalModeViaLKAS", PERSISTENT | FROGPILOT_CONTROLS},
     {"ExperimentalModeViaTap", PERSISTENT | FROGPILOT_CONTROLS},
     {"Fahrenheit", PERSISTENT | FROGPILOT_VISUALS},
-    {"FingerprintLogged", CLEAR_ON_MANAGER_START},
     {"FlashPanda", CLEAR_ON_MANAGER_START},
     {"ForceAutoTune", PERSISTENT | FROGPILOT_CONTROLS},
     {"ForceAutoTuneOff", PERSISTENT | FROGPILOT_CONTROLS},
@@ -396,7 +399,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"NavigationUI", PERSISTENT | FROGPILOT_VISUALS},
     {"NextMapSpeedLimit", CLEAR_ON_MANAGER_START},
     {"NewLongAPI", PERSISTENT | FROGPILOT_VEHICLES},
-    {"NewLongAPIGM", PERSISTENT | FROGPILOT_VEHICLES},
     {"NNFF", PERSISTENT | FROGPILOT_CONTROLS},
     {"NNFFLite", PERSISTENT | FROGPILOT_CONTROLS},
     {"NNFFModelName", CLEAR_ON_OFFROAD_TRANSITION},
@@ -539,6 +541,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"Updated", PERSISTENT},
     {"UpdateWheelImage", CLEAR_ON_MANAGER_START},
     {"UserCurvature", PERSISTENT},
+    {"UserLogged", CLEAR_ON_MANAGER_START},
     {"UseSI", PERSISTENT | FROGPILOT_VISUALS},
     {"UseStockColors", CLEAR_ON_MANAGER_START},
     {"UseVienna", PERSISTENT | FROGPILOT_CONTROLS},

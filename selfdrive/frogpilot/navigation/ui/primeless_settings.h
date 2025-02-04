@@ -19,7 +19,8 @@ protected:
 private:
   void createMapboxKeyControl(ButtonControl *&control, const QString &label, const std::string &paramKey, const QString &prefix, FrogPilotListWidget *list);
   void mousePressEvent(QMouseEvent *event);
-  void updateState();
+  void updateButtons();
+  void updateState(const UIState &s);
   void updateStep();
 
   bool mapboxPublicKeySet;
@@ -37,7 +38,7 @@ private:
   LabelControl *ipLabel;
 
   Params params;
-  Params params_storage{"/persist/params"};
+  Params params_cache{"/cache"};
 
   QLabel *imageLabel;
 

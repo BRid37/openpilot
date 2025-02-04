@@ -1,6 +1,7 @@
 #include "selfdrive/ui/qt/onroad/alerts.h"
 
 #include <QPainter>
+#include <filesystem>
 #include <map>
 
 #include "selfdrive/ui/qt/util.h"
@@ -29,6 +30,17 @@ OnroadAlerts::Alert OnroadAlerts::getAlert(const SubMaster &sm, uint64_t started
   const uint64_t controls_frame = sm.rcv_frame("controlsState");
 
   Alert a = {};
+
+  const std::string crash_log_path = "/data/crashes/error.txt";
+  if (std::filesystem::exists(crash_log_path) && (cs.getAlertText2() != "Please post the 'Error Log' in the FrogPilot Discord!")) {
+    a = {tr("openpilot crashed"),
+         tr("Please post the 'Error Log' in the FrogPilot Discord!"),
+         "openpilotCrashed",
+         cereal::ControlsState::AlertSize::MID,
+         cereal::ControlsState::AlertStatus::NORMAL};
+    return a;
+  }
+
   if (controls_frame >= started_frame) {  // Don't get old alert.
     a = {cs.getAlertText1().cStr(), cs.getAlertText2().cStr(),
          cs.getAlertType().cStr(), cs.getAlertSize(), cs.getAlertStatus()};
