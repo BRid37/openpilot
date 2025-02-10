@@ -55,7 +55,7 @@ except:
   LANG_FILE='/data/openpilot/selfdrive/assets/addon/lang/events/main_en.txt'
   pass
 try:
-  IS_WAZE = Params().get("KISANaviSelect", encoding="utf8") == "2"
+  IS_WAZE = Params().get("KISANaviSelect", encoding="utf8") in ("2", "4")
 except:
   IS_WAZE = False
   pass

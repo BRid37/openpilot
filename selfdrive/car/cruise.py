@@ -123,9 +123,9 @@ class VCruiseHelper:
             self.v_cruise_kph = round(CS.cruiseState.speed * m_unit)
             self.v_cruise_cluster_kph = self.v_cruise_kph
             self.v_cruise_kph_last = self.v_cruise_kph
-            if self.osm_speedlimit_enabled or self.navi_selection == 2:
+            if self.osm_speedlimit_enabled or self.navi_selection in (2, 4):
               self.osm_waze_off_spdlimit_init = True
-              if self.navi_selection == 2:
+              if self.navi_selection in (2, 4):
                 self.osm_waze_speedlimit = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
               elif self.osm_speedlimit_enabled:
                 self.osm_waze_speedlimit = round(self.sm['liveMapData'].speedLimit)
@@ -142,8 +142,8 @@ class VCruiseHelper:
             self.v_cruise_kph = int(self.sm['liveENaviData'].roadLimitSpeed) + self.cruise_road_limit_spd_offset
             self.v_cruise_cluster_kph = self.v_cruise_kph
             self.v_cruise_kph_last = self.v_cruise_kph
-          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection == 2) and self.osm_waze_off_spdlimit_init:
-            if self.navi_selection == 2:
+          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection in (2, 4)) and self.osm_waze_off_spdlimit_init:
+            if self.navi_selection in (2, 4):
               osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
               osm_waze_speedlimitdist_ = round(self.sm['liveENaviData'].wazeAlertDistance)
             elif self.osm_speedlimit_enabled:
@@ -166,14 +166,14 @@ class VCruiseHelper:
             elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
               self.pause_spdlimit = True
             elif osm_waze_speedlimit != self.v_cruise_kph:
-              if self.navi_selection == 2 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
+              if self.navi_selection in (2, 4) and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
                 self.v_cruise_kph = osm_waze_speedlimit
                 self.v_cruise_kph_last = self.v_cruise_kph
                 self.v_cruise_cluster_kph = self.v_cruise_kph
               elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
                 self.v_cruise_kph = osm_waze_speedlimit
                 self.v_cruise_kph_last = self.v_cruise_kph
-          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and not (self.osm_speedlimit_enabled or self.navi_selection == 2):
+          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and not (self.osm_speedlimit_enabled or self.navi_selection in (2, 4)):
             if self.sm['liveENaviData'].safetyDistance > 600: # temporary pause to limit spd in safety section
               self.second2 += DT_MDL
               if CS.cruiseButtons == Buttons.GAP_DIST: # push gap 3 times quickly, this is toggle.
@@ -198,8 +198,8 @@ class VCruiseHelper:
         self.v_cruise_cluster_kph = V_CRUISE_UNSET
       else:
         # to display maxspeed synced as roadspeedlimit on scc standby
-        if self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection == 2):
-          if self.navi_selection == 2:
+        if self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection in (2, 4)):
+          if self.navi_selection in (2, 4):
             osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
           elif self.osm_speedlimit_enabled:
             osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
@@ -212,7 +212,7 @@ class VCruiseHelper:
           elif self.osm_waze_spdlimit_offset_option in (2,3):
             osm_waze_speedlimit = int(np.interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
           if osm_waze_speedlimit != self.v_cruise_kph:
-            if self.navi_selection == 2 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
+            if self.navi_selection in (2, 4) and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
               self.v_cruise_kph = osm_waze_speedlimit
               self.v_cruise_kph_last = self.v_cruise_kph
               self.v_cruise_cluster_kph = self.v_cruise_kph

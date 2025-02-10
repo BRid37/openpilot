@@ -212,7 +212,7 @@ class KisaCruiseControl():
     #  return  cruise_set_speed_kph
 
     if not self.speedlimit_decel_off and not self.sm['carState'].pauseSpdLimit:
-      if self.navi_sel == 2:
+      if self.navi_sel in (2, 4):
         if self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
           self.map_speed = self.sm['liveENaviData'].wazeRoadSpeedLimit
           self.map_speed_dist = max(0, self.sm['liveENaviData'].wazeAlertDistance)
