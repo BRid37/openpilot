@@ -67,8 +67,8 @@ def calculate_lane_width(lane, current_lane, road_edge):
   lane_y_interp = np.interp(current_x, np.array(lane.x), np.array(lane.y))
   road_edge_y_interp = np.interp(current_x, np.array(road_edge.x), np.array(road_edge.y))
 
-  distance_to_lane = np.mean(np.abs(current_y - lane_y_interp))
-  distance_to_road_edge = np.mean(np.abs(current_y - road_edge_y_interp))
+  distance_to_lane = np.median(np.abs(current_y - lane_y_interp))
+  distance_to_road_edge = np.median(np.abs(current_y - road_edge_y_interp))
 
   return float(min(distance_to_lane, distance_to_road_edge))
 

@@ -153,17 +153,18 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int bottom_radius = has_eu_speed_limit ? 100 : 32;
 
   QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, 45), set_speed_size);
-  if (trafficModeActive) {
-    p.setPen(QPen(redColor(), 10));
-  } else {
-    p.setPen(QPen(whiteColor(75), 6));
-  }
-  p.setBrush(blackColor(166));
-  drawRoundedRect(p, set_speed_rect, top_radius, top_radius, bottom_radius, bottom_radius);
-
-  QColor max_color = QColor(0x80, 0xd8, 0xa6, 0xff);
-  QColor set_speed_color = whiteColor();
   if (!hideMaxSpeed) {
+    if (trafficModeActive) {
+      p.setPen(QPen(redColor(), 10));
+    } else {
+      p.setPen(QPen(whiteColor(75), 6));
+    }
+    p.setBrush(blackColor(166));
+    drawRoundedRect(p, set_speed_rect, top_radius, top_radius, bottom_radius, bottom_radius);
+
+    QColor max_color = QColor(0x80, 0xd8, 0xa6, 0xff);
+    QColor set_speed_color = whiteColor();
+
     // Draw MAX
     if (is_cruise_set) {
       if (status == STATUS_DISENGAGED) {
@@ -1095,9 +1096,6 @@ void AnnotatedCameraWidget::updateFrogPilotVariables(int alert_height, const UIS
 
   bool enableScreenRecorder = scene.screen_recorder && !mapOpen;
   screenRecorder->setVisible(enableScreenRecorder);
-  if (enableScreenRecorder) {
-    screenRecorder->updateScreen(scene.fps, scene.started);
-  }
 
   dashboardSpeedLimit = scene.dashboard_speed_limit * speedConversion;
   mapsSpeedLimit = scene.speed_limit_map * speedConversion;
