@@ -249,7 +249,7 @@ class ENaviUDP:
               self.mtom_dist_last = 579
             elif self.mtom4:
               self.mtom_dist_last = max(466, round(self.mtom_dist_last - (((int(self.waze_current_speed) + self.waze_current_speed_prev)/2) / 2.237)))
-              navi_msg.liveENaviData.wazeAlertDistance = int(mtom_dist_last)
+              navi_msg.liveENaviData.wazeAlertDistance = int(self.mtom_dist_last)
               self.waze_current_speed_prev = int(self.waze_current_speed)
             elif self.waze_alert_distance == "04" and not self.mtom4:
               self.waze_current_speed_prev = int(self.waze_current_speed)
